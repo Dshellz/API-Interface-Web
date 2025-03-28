@@ -83,7 +83,7 @@ def delete_user(user_name):
     cursor.execute('DELETE FROM users WHERE name = ?', (user_name,)) # Sup un user
     conn.commit()
     
-    if cursor.rowcount > 0: # Vérifier si un utilisateur a été supprimé
+    if cursor.rowcount > 0: # Verif si un utilisateur a été supprimé
         conn.close()
         return ({"success": True})
     else:
