@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, request 
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -40,14 +40,14 @@ def get_users():
     conn = db_user()
     users = conn.execute('SELECT * FROM users').fetchall()
     conn.close()
-    return ([dict(user) for user in users])
+    return jsonify([dict(user) for user in users])
 
 @app.route("/access", methods=["GET"])
 def get_access():
     conn = db_user()
     access = conn.execute('SELECT * FROM access_rights').fetchall()
     conn.close()
-    return ([dict(item) for item in access])
+    return jsonify([dict(item) for item in access])
 
 @app.route("/add_user", methods=["POST"])
 def add_user():
@@ -72,10 +72,10 @@ def delete_user(user_name):
     
     if cursor.rowcount > 0: # Verif si un utilisateur a été supprimé
         conn.close()
-        return ({"success": True})
+        return jsonify({"success": True})
     else:
         conn.close()
-        return ({"success": False, "message": "Utilisateur non trouvé"}), 404
+        return jsonify({"success": False, "message": "Utilisateur non trouvé"}), 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
