@@ -8,7 +8,7 @@ def index():
     return render_template('index.html')  # Charge la page HTML
 
 
-def db_user(): # Fonction pour se connecter à la base de données SQLite
+def db_user():
     conn = sqlite3.connect('db_dash.db')
     conn.row_factory = sqlite3.Row
     return conn
@@ -57,19 +57,6 @@ def add_user():
     
     conn = db_user()
     conn.execute('INSERT INTO users (name, role) VALUES (?, ?)', (name, role))
-    conn.commit()
-    conn.close()
-
-    return ({"success": True})
-
-@app.route("/add_access", methods=["POST"])
-def add_access():
-    data = request.get_json()
-    resource = data["resource"]
-    allowed = data["allowed"]
-
-    conn = db_user()
-    conn.execute('INSERT INTO access_rights (resource, allowed) VALUES (?, ?)', (resource, allowed))
     conn.commit()
     conn.close()
 
