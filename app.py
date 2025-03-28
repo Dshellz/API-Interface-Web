@@ -60,7 +60,7 @@ def add_user():
     conn.commit()
     conn.close()
 
-    return ({"success": True})
+    return jsonify({"success": True})
 
 @app.route("/delete_user/<string:user_name>", methods=["DELETE"])
 def delete_user(user_name):
