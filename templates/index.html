@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1><u>Gestion des Utilisateurs</u></h1>
+
+    <h2>Ajouter un Utilisateur</h2>
+    <form id="userForm">
+        <input type="text" id="name" placeholder="Nom" required>
+        <input type="text" id="role" placeholder="Rôle" required>
+        <button type="submit">Ajouter</button>
+    </form>
+    <h2>Supprimer un Utilisateur</h2>
+    <form id="deleteUserForm">
+        <label for="userName">Nom de l'utilisateur à supprimer :</label>
+        <input type="text" id="userName" name="userName" required>
+
+        <button type="submit">Supprimer</button>
+    </form>
+
+    <div id="responseMessage"></div> <!-- Affichage du message de réponse -->
+    </div>  
+    <h2>Liste des Utilisateurs</h2>
+    <ul id="userList"></ul>
+    
+    <h1><u>Gestion des Salles</u></h1>
+
+    <h2>Ajouter une Salle</h2>
+    <form id="addRoomForm">
+        <label for="roomName">Nom de la salle :</label>
+        <input type="text" id="roomName" required>
+        <button type="submit">Ajouter Salle</button>
+    </form>
+
+    <h2>Modifier Horaires d'Accès</h2>
+    <form id="setScheduleForm">
+        <label for="roomSelect">Choisir une salle :</label>
+        <select id="roomSelect" required></select>
+
+        <label for="startTime">Horaire de début :</label>
+        <input type="time" id="startTime" required>
+
+        <label for="endTime">Horaire de fin :</label>
+        <input type="time" id="endTime" required>
+
+        <button type="submit">Modifier Horaire</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
