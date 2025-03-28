@@ -64,18 +64,19 @@ def add_user():
 
 @app.route("/delete_user/<string:user_name>", methods=["DELETE"])
 def delete_user(user_name):
-    conn = db_user()
-    cursor = conn.cursor()
-    
-    cursor.execute('DELETE FROM users WHERE name = ?', (user_name,)) # Sup un user
-    conn.commit()
-    
-    if cursor.rowcount > 0: # Verif si un utilisateur a été supprimé
+    try:
+        conn = db_user()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM users WHERE name = ?', (user_name,))
+        conn.commit()
+        if cursor.rowcount > 0: # Vérifie si l'user à été delete
+            return jsonify({"success": True, "message": "Utilisateur supprimé avec succès!"}), 200
+        else:
+            return jsonify({"success": False, "message": "Utilisateur non trouvé"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
         conn.close()
-        return jsonify({"success": True})
-    else:
-        conn.close()
-        return jsonify({"success": False, "message": "Utilisateur non trouvé"}), 404
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=10000)

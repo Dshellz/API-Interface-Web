@@ -33,27 +33,32 @@ function loadUsers() {
             users.forEach(user => {
                 const li = document.createElement("li");
                 li.textContent = `${user.name} - ${user.role}`;
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Supprimer";
+                deleteButton.onclick = function() {
+                    deleteUser(user.name);
+                };
+
+                li.appendChild(deleteButton)
                 userList.appendChild(li);
             });
         });
 }
-document.getElementById('deleteUserForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Empêche le rechargement de la page
 
-    
-    const userName = document.getElementById('userName').value; // Récup le nom de l'utilisateur
-
-    // Envoi de la requête DELETE
+function deleteUser(userName) {
     fetch(`/delete_user/${userName}`, {
         method: 'DELETE',
     })
     .then(response => response.json()) // Parse la réponse en JSON
     .then(data => {
-        // Afficher un message de succès ou d'erreur
-        alert('Utilisateur supprimé avec succès!');
-        location.reload(); // Recharger la page pour voir les changements
+        if (data.success) {
+            alert('Utilisateur supprimé avec succès !');
+            loadUsers();} // Recharger la page pour voir les changements
+        else {
+            alert("Erreur"); 
+        }
     })
     .catch(error => {
         console.error('Erreur:', error);
     });
-});
+}
