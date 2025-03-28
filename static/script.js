@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const name = document.getElementById("name").value;
         const role = document.getElementById("role").value;
 
-        fetch("https://api-interface-web.onrender.com//add_user", {
+        fetch("/add_user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: name, role: role })
