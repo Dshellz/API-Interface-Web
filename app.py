@@ -44,12 +44,12 @@ def get_users():
     conn.close()
     return jsonify([dict(user) for user in users])
 
-@app.route("/access", methods=["GET"])
-def get_access():
-    conn = db_user()
-    access = conn.execute('SELECT * FROM access_rights').fetchall()
-    conn.close()
-    return jsonify([dict(item) for item in access])
+# @app.route("/access", methods=["GET"])
+# def get_access():
+#     conn = db_user()
+#     access = conn.execute('SELECT * FROM access_rights').fetchall()
+#     conn.close()
+#     return jsonify([dict(item) for item in access])
 
 @app.route("/add_user", methods=["POST"])
 def add_user():
