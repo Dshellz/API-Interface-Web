@@ -15,7 +15,7 @@ def db_user():
     conn.row_factory = sqlite3.Row
     return conn
 
-def init_db(): # Créer les tables si elles n'existent pas encore
+def init_db(): # Créer les tables
     conn = db_user()
     conn.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY,
@@ -37,19 +37,28 @@ def init_db(): # Créer les tables si elles n'existent pas encore
 
 init_db()
 
+# @app.route("/check_badge", methods=["GET"])
+# def check_badge():
+#     badgeUID = request.args.get("badgeUID")
+
+#     if not badgeUID:
+#         return jsonify({"error": "badgeUID is required"}), 400
+
+#     conn = db_user()
+#     user = conn.execute('SELECT * FROM users WHERE badgeUID = ?', (badgeUID,)).fetchone()
+#     conn.close()
+
+#     if user:
+#         return jsonify({"status": "valid", "message": f"Badge trouvé pour {user['name']}", "user": dict(user)}), 200
+#     else:
+#         return jsonify({"status": "invalid", "error": "Badge non trouvé"}), 404
+
 @app.route("/users", methods=["GET"])
 def get_users():
     conn = db_user()
     users = conn.execute('SELECT * FROM users').fetchall()
     conn.close()
     return jsonify([dict(user) for user in users])
-
-# @app.route("/access", methods=["GET"])
-# def get_access():
-#     conn = db_user()
-#     access = conn.execute('SELECT * FROM access_rights').fetchall()
-#     conn.close()
-#     return jsonify([dict(item) for item in access])
 
 @app.route("/add_user", methods=["POST"])
 def add_user():
