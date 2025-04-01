@@ -24,7 +24,7 @@ def init_db():
                         badgeuid TEXT)''')
     
     conn.execute('''CREATE TABLE IF NOT EXISTS rooms (
-                        id INTEGER PRIMARY KEY,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         room_name TEXT NOT NULL)''')
     
     conn.execute('''CREATE TABLE IF NOT EXISTS acces_horaire (
@@ -38,21 +38,25 @@ def init_db():
 
 init_db()
 
-@app.route("/check_badge", methods=["GET"])
-def check_badge():
-    badgeUID = request.args.get("badgeUID")
+# Verification BadgeUID
 
-    if not badgeUID:
-        return jsonify({"error": "badgeUID requis"}), 400
+@app.route("/check_badge", methods=["POST"])
+def check_badge():
+    data = request.get_json()
+    badgeuid = data.get("badgeuid")
+    if not badgeuid:
+        return jsonify({"error": "badgeuid requis"}), 400
 
     conn = db_user()
-    user = conn.execute('SELECT * FROM users WHERE badgeUID = ?', (badgeUID,)).fetchone()
+    user = conn.execute('SELECT * FROM users WHERE badgeuid = ?', (badgeuid,)).fetchone()
     conn.close()
 
     if user:
-        return jsonify({"status": "valid", "message": f"Badge trouvé pour {user['name']}", "user": dict(user)}), 200
+        return "access_ok", 200
     else:
-        return jsonify({"status": "invalid", "error": "Badge non trouvé"}), 404
+        return "access_denied", 404
+
+# Ajout utilisateurs et Modifications
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -66,10 +70,10 @@ def add_user():
     data = request.get_json()
     name = data["name"]
     role = data["role"]
-    badgeUID = data.get("badgeUID", None)
+    badgeuid = data.get("badgeuid", None)
     
     conn = db_user()
-    conn.execute('INSERT INTO users (name, role, badgeUID) VALUES (?, ?, ?)', (name, role, badgeUID))
+    conn.execute('INSERT INTO users (name, role, badgeuid) VALUES (?, ?, ?)', (name, role, badgeuid))
     conn.commit()
     conn.close()
 
@@ -90,6 +94,79 @@ def delete_user(user_name):
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
         conn.close()
+
+# Ajout de salle & Horaires
+
+@app.route("/rooms", methods=["GET"]) # Récuperer les salles
+def get_rooms():
+    conn = db_user()
+    rooms = conn.execute('SELECT * FROM rooms').fetchall()
+    conn.close()
+    
+    if rooms:
+        return jsonify([dict(room) for room in rooms])
+    else:
+        return jsonify({"success": False, "message": "Aucune salle disponible"}), 404
+
+@app.route("/add_room", methods=["POST"])  # Ajouter une salle avec horaires
+def add_room():
+    data = request.get_json()
+    room_name = data["room_name"]
+    start_time = data["start_time"]
+    end_time = data["end_time"]
+    
+    # Insérer la salle dans la table rooms et récupere l'ID
+    conn = db_user()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO rooms (room_name) VALUES (?)', (room_name,))
+    conn.commit()
+    room_id = cursor.lastrowid  # Récupère l'ID de la salle
+    
+    conn.execute('INSERT INTO acces_horaire (room_id, start_time, end_time) VALUES (?, ?, ?)', 
+                 (room_id, start_time, end_time))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True, "message": "Salle ajouté avec succès !"})
+
+@app.route("/set_horaire", methods=["POST"])
+def set_horaire():
+    data = request.get_json()
+    room_id = data["room_id"]
+    start_time = data["start_time"]
+    end_time = data["end_time"]
+    
+    conn = db_user()
+    conn.execute('''
+        INSERT OR REPLACE INTO acces_horaire (room_id, start_time, end_time)
+        VALUES (?, ?, ?)
+    ''', (room_id, start_time, end_time))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True})
+
+@app.route("/get_horaire", methods=["GET"])
+def get_horaire():
+    room_id = request.args.get("room_id")
+    conn = db_user()
+    horaire = conn.execute('''
+        SELECT acces_horaire.id, acces_horaire.room_id, acces_horaire.start_time, acces_horaire.end_time, rooms.room_name
+        FROM acces_horaire
+        JOIN rooms ON acces_horaire.room_id = rooms.id
+        WHERE acces_horaire.room_id = ?
+    ''', (room_id,)).fetchone()
+    conn.close()
+
+    if horaire:
+        return jsonify({
+            "room_id": horaire["room_id"],
+            "room_name": horaire["room_name"],
+            "start_time": horaire["start_time"],
+            "end_time": horaire["end_time"]
+        })
+    else:
+        return jsonify({"success": False, "message": "Horaire non trouvé"}), 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
