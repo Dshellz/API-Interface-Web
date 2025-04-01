@@ -15,12 +15,13 @@ def db_user():
     conn.row_factory = sqlite3.Row
     return conn
 
-def init_db(): # Créer les tables
+def init_db():
     conn = db_user()
     conn.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY,
                         name TEXT NOT NULL,
-                        role TEXT NOT NULL)''')
+                        role TEXT NOT NULL,
+                        badgeuid TEXT)''')
     
     conn.execute('''CREATE TABLE IF NOT EXISTS rooms (
                         id INTEGER PRIMARY KEY,
@@ -37,21 +38,21 @@ def init_db(): # Créer les tables
 
 init_db()
 
-# @app.route("/check_badge", methods=["GET"])
-# def check_badge():
-#     badgeUID = request.args.get("badgeUID")
+@app.route("/check_badge", methods=["GET"])
+def check_badge():
+    badgeUID = request.args.get("badgeUID")
 
-#     if not badgeUID:
-#         return jsonify({"error": "badgeUID is required"}), 400
+    if not badgeUID:
+        return jsonify({"error": "badgeUID requis"}), 400
 
-#     conn = db_user()
-#     user = conn.execute('SELECT * FROM users WHERE badgeUID = ?', (badgeUID,)).fetchone()
-#     conn.close()
+    conn = db_user()
+    user = conn.execute('SELECT * FROM users WHERE badgeUID = ?', (badgeUID,)).fetchone()
+    conn.close()
 
-#     if user:
-#         return jsonify({"status": "valid", "message": f"Badge trouvé pour {user['name']}", "user": dict(user)}), 200
-#     else:
-#         return jsonify({"status": "invalid", "error": "Badge non trouvé"}), 404
+    if user:
+        return jsonify({"status": "valid", "message": f"Badge trouvé pour {user['name']}", "user": dict(user)}), 200
+    else:
+        return jsonify({"status": "invalid", "error": "Badge non trouvé"}), 404
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -65,13 +66,14 @@ def add_user():
     data = request.get_json()
     name = data["name"]
     role = data["role"]
+    badgeUID = data.get("badgeUID", None)
     
     conn = db_user()
-    conn.execute('INSERT INTO users (name, role) VALUES (?, ?)', (name, role))
+    conn.execute('INSERT INTO users (name, role, badgeUID) VALUES (?, ?, ?)', (name, role, badgeUID))
     conn.commit()
     conn.close()
 
-    return jsonify({"success": True})
+    return jsonify({"success": True, "message": "L'utilisateur a été ajouté !"})
 
 @app.route("/delete_user/<string:user_name>", methods=["DELETE"])
 def delete_user(user_name):
