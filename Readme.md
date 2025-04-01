@@ -3,14 +3,14 @@
 ## Table des matières
 
 1. [Introduction](#introduction)
-   - [Description de la mission](#description-de-la-mission)
-2. [Schéma du lecteur RFID](#schema-du-lecteur-rfid)
-3. [Description des composants utilisés](#description-des-composants-utilises)
-4. [Code Arduino](#code-arduino)
-5. [API](#api)
-   - [Interface Web](#interface-web)
-   - [Sécurisation](#securisation)
-6. [Hébergement](#hebergement)
+   - [Description de la mission](#11-description-de-la-mission)
+2. [Schéma du lecteur RFID](#2-schéma-du-lecteur-rfid)
+3. [Description des composants utilisés](#3-description-des-composants-utilisés)
+4. [Code Arduino](#4-code-arduino)
+5. [API](#5-api)
+   - [Interface Web](#52-interface-web)
+   - [Sécurisation](#6-sécurisation)
+6. [Hébergement](#7-hébergement)
 
 ---
 
@@ -66,6 +66,7 @@ L’accès est autorisé ou refusé en fonction des permissions définies.
 
 ## 5. API
 
+
 ### 5.1 Fonctionnalités de l'API
 
 L’API permet de gérer les badges et les accès des utilisateurs. Nous avons conçu une base de données locale contenant :
@@ -110,11 +111,12 @@ L’API a été hébergée sur **Render** : [https://api-interface-web.onrender.
 Limitations de Render :
 
 - L’hébergement gratuit est limité (veille après 15 minutes d'inactivité).
-- La base de données n’est pas persistante.
-- Nécessité de déployer via GitHub après chaque mise à jour.
+- La base de données ne se sauvegarde pas donc nécessite de déployer via GitHub après chaque mise à jour.
 
 Nous recommandons d’utiliser l’API en local pour plus de flexibilité.
 
+## Base de données
+![Base de données](images/db.png)
 
 ---
 
