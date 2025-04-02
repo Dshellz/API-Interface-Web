@@ -40,7 +40,7 @@ init_db()
 
 # Verification BadgeUID
 
-@app.route("/check_badge", methods=["POST"])
+@app.route("/check_badge", methods=["POST", "GET"])
 def check_badge():
     data = request.get_json()
     badgeuid = data.get("badgeuid")
