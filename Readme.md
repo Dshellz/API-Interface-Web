@@ -77,7 +77,7 @@ L’API permet de gérer les badges et les accès des utilisateurs. Nous avons c
 L’API comporte plusieurs endpoints :
 
 - **`/check_badge`** : Vérifie l’UID du badge et autorise ou refuse l’accès.
-- **Endpoints CRUD** : Pour ajouter, afficher et supprimer des utilisateurs, leurs rôles et leurs horaires d’accès.
+- **Endpoints** : Pour ajouter, afficher et supprimer des utilisateurs, leurs rôles et leurs horaires d’accès.
 
 ### 5.2 Interface Web
 
