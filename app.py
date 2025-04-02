@@ -53,18 +53,16 @@ def get_users():
 
 @app.route("/check_badge", methods=["POST"])
 def check_badge():
-    if not request.is_json:
-        return jsonify({"error": "Le Content-Type doit être application/json"}), 415
-
     data = request.get_json()
-    badgeuid = data.get("badgeuid")
-
-    if not badgeuid:
+    
+    if not data or "badgeuid" not in data:
         return jsonify({"error": "badgeuid requis"}), 400
+
+    badgeuid = data["badgeuid"]
 
     conn = db_user()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE badgeuid = ?", (badgeuid,))
+    cursor.execute("SELECT 1 FROM users WHERE badgeuid = ?", (badgeuid,))
     user = cursor.fetchone()
     conn.close()
 
