@@ -38,23 +38,7 @@ def init_db():
 
 init_db()
 
-# Verification BadgeUID
 
-@app.route("/check_badge", methods=["POST", "GET"])
-def check_badge():
-    data = request.get_json()
-    badgeuid = data.get("badgeuid")
-    if not badgeuid:
-        return jsonify({"error": "badgeuid requis"}), 400
-
-    conn = db_user()
-    user = conn.execute('SELECT * FROM users WHERE badgeuid = ?', (badgeuid,)).fetchone()
-    conn.close()
-
-    if user:
-        return "access_ok", 200
-    else:
-        return "access_denied", 404
 
 # Ajout utilisateurs et Modifications
 
@@ -65,6 +49,30 @@ def get_users():
     conn.close()
     return jsonify([dict(user) for user in users])
 
+# Verification BadgeUID
+
+@app.route("/check_badge", methods=["POST"])
+def check_badge():
+    if not request.is_json:
+        return jsonify({"error": "Le Content-Type doit être application/json"}), 415
+
+    data = request.get_json()
+    badgeuid = data.get("badgeuid")
+
+    if not badgeuid:
+        return jsonify({"error": "badgeuid requis"}), 400
+
+    conn = db_user()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE badgeuid = ?", (badgeuid,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
+        return "access_ok", 200
+    else:
+        return "access_denied", 404
+    
 @app.route("/add_user", methods=["POST"])
 def add_user():
     data = request.get_json()
