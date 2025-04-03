@@ -66,10 +66,10 @@ def check_badge():
     user = cursor.fetchone()
     conn.close()
 
-    if user:
+    if user and badgeuid == "c31f1911":
         return "access_ok", 200
     else:
-        return "access_denied", 404
+        return "access_denied", 403
     
 @app.route("/add_user", methods=["POST"])
 def add_user():
