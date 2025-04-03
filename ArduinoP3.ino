@@ -93,10 +93,10 @@ void loop() {
         lcd.clear();
         if (response == "access_ok") {
             Serial.println("Accès autorisé !");
-            lcd.print("Accès autorisé !");
+            lcd.print("Acces autorise !");
         } else {
             Serial.println("Accès refusé !");
-            lcd.print("Accès refusé !");
+            lcd.print("Acces refuse !");
         }
     } else {
         Serial.print("Erreur HTTP : ");
