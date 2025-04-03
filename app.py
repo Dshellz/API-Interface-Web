@@ -49,15 +49,6 @@ def get_users():
     conn.close()
     return jsonify([dict(user) for user in users])
 
-# @app.route("/users", methods=["GET"])
-# def get_users():
-#     conn = db_user()
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT badgeuid FROM users")
-#     users = [row[0] for row in cursor.fetchall()]
-#     conn.close()
-#     return jsonify(users)
-
 # Verification BadgeUID
 
 @app.route("/check_badge", methods=["POST"])
