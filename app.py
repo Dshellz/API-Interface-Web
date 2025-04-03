@@ -63,10 +63,11 @@ def check_badge():
     conn = db_user()
     cursor = conn.cursor()
     cursor.execute("SELECT 1 FROM users WHERE badgeuid = ?", (badgeuid,))
+    # Pour une meilleur opti : "SELECT 1 FROM users WHERE badgeuid = ? AND role = 'Admin'" 
     user = cursor.fetchone()
     conn.close()
 
-    if user and badgeuid == "c31f1911":
+    if user and badgeuid == "c31f1911": # On peut juste laisser aussi le user si on utlise la verif role 'Admin'
         return "access_ok", 200
     else:
         return "access_denied", 403
